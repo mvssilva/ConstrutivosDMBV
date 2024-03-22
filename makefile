@@ -6,25 +6,26 @@ LNKFLAGS1 = -std=c++11 -m64 -I include
  
 COMP = g++
 
+OBJ_DIR = obj
+
 TARGET = ArvoreGeradora.exe
 
-OBJ = AndersonV4.o Grafo.o main.o
+# Obtém automaticamente a lista de todos os arquivos .cpp 
+SRCS := $(wildcard src/*.cpp)
+SRCS += main.cpp
+
+# Gera a lista de arquivos de objeto correspondentes na pasta obj
+OBJ := $(patsubst src/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
 
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
 	$(COMP) $(LNKFLAGS1) $(OBJ) -o $@
 
-AndersonV4.o: src/AndersonV4.cpp
-	$(COMP) $(CPPFLAGS) -c $< 
-
-Grafo.o: src/Grafo.cpp
-	$(COMP) $(CPPFLAGS) -c $< 
-
-main.o: main.cpp
-	$(COMP) $(CPPFLAGS) -c $<
+# Regra para compilar cada arquivo .cpp e colocar o arquivo de objeto na pasta obj
+$(OBJ_DIR)/%.o: src/%.cpp main.cpp
+	$(COMP) $(CPPFLAGS) -c $< -o $@
 	
-	
-
 clean:
-	rm -f $(OBJ) $(TARGET)	
+	rm -f $(OBJ_DIR)/*.o
+	rm -f *.exe
